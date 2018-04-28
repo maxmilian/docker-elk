@@ -1,4 +1,4 @@
-Nginx Log Analytics by ELK
+Nginx Log in ELK
 ===========
 
 # ELK stack 简介
@@ -26,8 +26,14 @@ Kiban 是一个开源的 Elasticsearch 数据可视化插件。
 
 
 ```bash
+# 先去 https://github.com/deviantony/docker-elk clone 或 fork 此专案
+# 切换至 x-pack 分支
 git checkout x-pack
+
+# 建立服务
 docker-compose build
+
+# 启动服务
 docker-compose up
 ```
 
@@ -64,7 +70,10 @@ input {
 }
 ```
 
-设定完四个档案后，便可再次执行 docker-compose build && docker-compose up 来启动
+> NOTE: [Logstach 说明](https://www.elastic.co/guide/en/logstash/current/configuration.html)
+
+设定完以下四个档案后，便可再次执行 docker-compose build && docker-compose up 来启动服务
+
 - nginx/Dockerfile
 - nginx/config/nginx.conf
 - logstash/config/logstash.yml
@@ -72,6 +81,8 @@ input {
 
 启动后，即可以开启浏览器 http://localhost:8080/ 可以看到 nginx 画面
 ![Nignx](https://github.com/maxmilian/docker-elk/blob/x-pack/images/nginx.png)
+
+
 
 # Kibana
 
@@ -82,13 +93,23 @@ input {
 
 ![Index Patterns](https://github.com/maxmilian/docker-elk/blob/x-pack/images/index_patterns.png)
 
+此时可以多次重新载入 http://localhost:8080/ 便会有 log 出现于 Discover 分页。也可放入其他 access.log 于 nginx/logs 目录下，便可以自动汇入。
+
 点选其一可以查看细节
 
 ![LegalMiner Log](https://github.com/maxmilian/docker-elk/blob/x-pack/images/legalminor_log_detail.png)
 
 
 # Watcher
-设定 [Watcher](https://www.elastic.co/guide/en/watcher/current/introduction.html)。于 Kibana 中 Management > Elasticsearch > Watcher ，可以新建一 Watcher
+[Watcher](https://www.elastic.co/guide/en/watcher/current/index.html) 是一个根据数据提供警示并通报的 Elasticsearch 插件。这里可以提供监测 Nginx log 并错误回报等监控。
+
+监控基于四个区块
+- schedule: 何时启动检查
+- query: 针对数据做的查询
+- condtion: 查询符合的条件
+- aciton: 条件服何时，执行的通知动作
+
+设定 [Watcher](https://www.elastic.co/guide/en/watcher/current/introduction.html)。Kibana 中 Management > Elasticsearch > Watcher ，可以新建一 Watcher
 
 填入范例json
 
